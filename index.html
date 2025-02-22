@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>塞尔维亚语学习助手</title>
+  <style>
+    /* 样式代码保持不变 */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      height: 90%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      grid-gap: 10px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 1.8rem;
+      text-align: center;
+      color: #333;
+      margin: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 20px;
+      height: 100%;
+    }
+    .section {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: auto;
+    }
+    .section h2 {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    textarea, input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 0.9rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: none;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .output {
+      font-size: 1rem;
+      color: #333;
+      background: #fff;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 10px;
+      width: 100%;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #666;
+      padding: 10px 0;
+    }
+    .sentence-list {
+      display: none;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .sentence-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .sentence-item button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+    .sentence-item button:hover {
+      background-color: #c0392b;
+    }
+    #save-recording-msg {
+      font-size: 1rem;
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>塞尔维亚语学习助手</h1>
+    <div class="grid">
+      <!-- 功能 1: 记录句子 -->
+      <div class="section">
+        <h2>记录句子</h2>
+        <textarea id="sentence-input" rows="3" placeholder="请输入句子"></textarea>
+        <input type="text" id="category-input" placeholder="分类（可选）">
+        <button onclick="saveSentence()">保存句子</button>
+        <button onclick="toggleSentenceList()">查看/隐藏句子库</button>
+        <input type="text" id="search-input" placeholder="输入关键词检索句子">
+        <button onclick="searchSentences()">检索</button>
+        <div class="sentence-list" id="sentence-list"></div>
+      </div>
+
+      <!-- 功能 3: 复习句子 -->
+      <div class="section">
+        <h2>复习句子</h2>
+        <select id="category-select" onchange="updateRandomSentenceCategory()">
+          <option value="">选择分类（所有）</option>
+        </select>
+        <input type="text" id="review-search-input" placeholder="输入关键词检索复习句子">
+        <button onclick="reviewSearch()">搜索复习</button>
+        <button onclick="getRandomSentence()">随机展示句子</button>
+        <div id="random-chinese" class="output">随机句子将显示在这里</div>
+        <button onclick="showTranslation()">显示翻译</button>
+        <div id="translation" class="output hidden">翻译内容</div>
+        <button onclick="startRecording()">开始录音</button>
+        <button id="stop-recording" onclick="stopRecording()" class="hidden">停止录音</button>
+        <button id="save-recording" onclick="saveRecording()" class="hidden">保存录音</button>
+        <div id="recording-status" class="output hidden">正在录音...</div>
+        <audio id="audio-playback" controls class="hidden"></audio>
+        <div id="save-recording-msg" class="hidden">录音已保存</div>
+      </div>
+
+      <!-- 功能 2: 导出和导入 -->
+      <div class="section">
+        <h2>导出 / 导入句子</h2>
+        <button onclick="exportSentences()">导出句子</button>
+        <input type="file" id="import-file" accept=".json">
+        <button onclick="importSentences()">导入句子</button>
+      </div>
+    </div>
+    <footer>© 2025 塞尔维亚语学习助手 - 单页优化版</footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
